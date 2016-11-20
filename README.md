@@ -1,1 +1,3 @@
 # pacer
+Computes split times and paces to hit a special target time in a hilly race
+Still work in progress...
