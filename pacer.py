@@ -10,6 +10,8 @@ Usage: $ splittimes.py [input.json]
 pdfs will be written to current directory
 '''
 
+# TODO: This file needs a lot of cleanup. Urgently!!
+
 def main():
     with open(sys.argv[1]) as input_data:
         json_data = json.loads(input_data.read())
