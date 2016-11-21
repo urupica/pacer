@@ -88,7 +88,7 @@ def calculate_split_times(name, output_name, all_points, hours, minutes):
 
     total_time = (hours*60 + minutes)*60
 
-    tex_file_name = '{}_{:02d}_{:02d}'.format(output_name, hours, minutes)
+    tex_file_name = '{}_{}_{:02d}'.format(output_name, hours, minutes)
     all_data = []
     
     #split times for the sections
