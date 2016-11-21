@@ -1,0 +1,124 @@
+\documentclass[letterpaper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[utf8]{inputenc}
+%\usepackage{graphicx}
+
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.8}
+
+\begin{document}
+\begin{center}{\huge Split times - \VAR{name}\\Target time: \VAR{hours}:\VAR{minutes}h}\\[0.5cm]
+{\Large Uphill and downhill sections}\\[0.5cm]
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline Total & Partial & Gradient & Pace & Section time & Split time & Location\\ \hline
+
+\BLOCK{ for data in data1 }
+	\VAR{data[0]} km & \VAR{data[1]} km & \VAR{data[2]} \%& \VAR{data[3]} min/km & \VAR{data[4]} & \VAR{data[5]} & \VAR{data[6]} \\
+\BLOCK{ endfor }
+\hline
+\end{tabular}
+	\\[1cm]
+\begin{tikzpicture}
+\begin{axis}[
+    axis lines = left,
+	hide y axis,
+    %enlargelimits = true,
+	enlarge y limits=0.2, 
+	xlabel = {distance [km]},
+	ylabel = {altitude [m]},
+    width =\textwidth,
+    height= 5cm,
+    %title = {Pacer},
+]
+\addplot[
+    line width=1pt,
+    mark=*,
+    x=km,
+    y=alt,
+    nodes near coords,
+    point meta=explicit symbolic,
+    visualization depends on={value \thisrow{anchor}\as\myanchor},
+    nodes near coords align={anchor=\myanchor},
+    %nodes={font=\small},
+    %nodes near coords align={anchor=west},
+    %visualization depends on={value \thisrow{anchor}\as\myanchor},
+    %every node near coord/.append style={font=\small,anchor=\myanchor}
+    %every node near coord/.append style={font=\small, anchor=south}
+] table
+[
+col sep=comma,
+row sep=\\,
+meta=location
+]
+{
+km, alt, location, anchor\\
+\BLOCK{ for data in data5 }
+	\VAR{data[0]}, \VAR{data[1]}, \VAR{data[2]}, \VAR{data[3]}\\
+\BLOCK{ endfor }
+};
+\end{axis}
+\end{tikzpicture}
+%    \begin{axis}[
+%    width=\textwidth,
+%    height=5cm,
+%    ymajorgrids,
+%    title = {Title},
+%    axis lines = left,
+%	   xlabel={distance [km]},
+%	    ylabel={altitude [m]}
+%    ]
+%	    \addplot[
+%		mark=*,
+%		x=km,
+%	    	y=alt,
+%	    	nodes near coords
+    		%point meta=explicit symbolic
+%		    ]table[
+%		meta=location
+%		] {data.csv};
+	    %mark=*,
+	    %only marks, 
+	    %scatter src=explicit symbolic,
+    %x tick label style={/pgf/number format/1000 sep=},
+    %ytick scale label code/.code={$\times$bn\EUR{}},
+    %legend pos=outer north east
+%    \end{axis}
+%\end{tikzpicture}
+{\\[0.5cm]\Large Split times per kilometer / per 5 kilometers / per notorious location}\\[0.5cm]
+\begin{minipage}{0.15\textwidth}
+\center\begin{tabular}{|c|c|}
+\hline Km & Time\\ \hline
+\BLOCK{ for data in data2 }
+	\VAR{data[0]} & \VAR{data[1]} \\
+\BLOCK{ endfor }
+\hline
+\end{tabular}
+\end{minipage}
+\begin{minipage}{0.8\textwidth}
+%\begin{minipage}{0.4\textwidth}
+	\hspace{2cm}
+\begin{tabular}{|c|c|}
+\hline Km & Time\\ \hline
+\BLOCK{ for data in data3 }
+	\VAR{data[0]} & \VAR{data[1]} \\
+\BLOCK{ endfor }
+\hline
+\end{tabular}
+%\end{minipage} 
+%\begin{minipage}{0.5\textwidth}
+	\hspace{2cm}
+\begin{tabular}{|c|c|c|}
+\hline Km & Time & Location\\ \hline
+\BLOCK{ for data in data4 }
+	\VAR{data[0]} & \VAR{data[1]} & \VAR{data[2]} \\
+\BLOCK{ endfor }
+\hline
+\end{tabular}
+%\end{minipage}
+
+\end{minipage}
+
+
+
+\end{center}
+\end{document}

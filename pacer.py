@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
-import datetime, os, subprocess, sys, json
+import datetime, os, subprocess, sys, json, jinja2
 from fractions import Fraction
+from jinja2 import Template
 
 '''
 Usage: $ splittimes.py input.txt hh:mm [nopdf]
@@ -24,7 +25,7 @@ def compute_between_indices(distances, partial_distances, height_differences, pa
             #str(i+1).rjust(2),
             float(distances[i+1])/1000,
             float(partial_distances[i])/1000,
-            float(height_differences[i]*100)/partial_distances[i],
+            "%.2f" % (float(height_differences[i]*100)/partial_distances[i]),
             str(datetime.timedelta(seconds = int(paces_per_section[i]*1000)))[3:7],
             str(datetime.timedelta(seconds = int(paces_per_section[i]*partial_distances[i])))[:7],
             str(datetime.timedelta(seconds = partial_times[i]))[:7],
@@ -105,7 +106,8 @@ def calculate_split_times(file_name, hours, minutes, stdout, pdf):
     for i in range(points - 1):
         data_1.append(compute_between_indices(distances, partial_distances, height_differences, paces_per_section, partial_times, locations, i, i+1))
     all_data.append(data_1)
-    
+   
+
     partial_times = [0]
     partial_time = 0
     section = 0
@@ -258,80 +260,49 @@ def calculate_split_times(file_name, hours, minutes, stdout, pdf):
                 markant_abbr[i])
         data_4.append(data)
     all_data.append(data_4)
+    
+    data_5 = []
+    for i in range(points):
+        print("%s %s" % (distances[i], heights[i]))
+        data_5.append((float(distances[i])/1000, heights[i], locations[i], "south" if i % 2 == 0 else "north"))
+    all_data.append(data_5)
     '''
     if partial_distance < distances[-1]:
         if pront_to_stdout == True:
             print('finish time: %skm, %sh' % (float(distances[-1])/1000, str(datetime.timedelta(seconds = total_time))[:7]))
     '''
     if pdf:
-        create_pdf(tex_file_name, name, total_time, all_data)
-    if stdout:
-        print_to_stdout(all_data)
+        create_pdf(tex_file_name, name, hours, minutes, all_data)
+    #if stdout:
+    #    print_to_stdout(all_data)
 
-def create_pdf(file_name, name, total_time, all_data):
+def create_pdf(file_name, name, hours, minutes, all_data):
+    latex_jinja_env = jinja2.Environment(
+	block_start_string = '\BLOCK{',
+	block_end_string = '}',
+	variable_start_string = '\VAR{',
+	variable_end_string = '}',
+	comment_start_string = '\#{',
+	comment_end_string = '}',
+	line_statement_prefix = '%%',
+	line_comment_prefix = '%#',
+	trim_blocks = True,
+	autoescape = False,
+	loader = jinja2.FileSystemLoader(os.path.abspath('.'))
+    )
+    template = latex_jinja_env.get_template('template.tex')
     fout = open(file_name + '.tex','w')
-    fout.write('\\documentclass[letterpaper]{article}\n')
-    fout.write('\\usepackage[margin=1in]{geometry}\n')
-    fout.write('\\usepackage[utf8]{inputenc}\n')
-    fout.write('\\usepackage{graphicx}\n')
-    fout.write('\\begin{document}\n')
-    fout.write('\\begin{center}')
-    fout.write('{\\huge Split times - ' + name + '\\\\Target time: ' + str(datetime.timedelta(seconds = total_time))[:4] + 'h}\\\\[0.5cm]\n')
-
-    fout.write('{\\Large Uphill and downhill sections}\\\\[0.5cm]\n')    
-    fout.write('\\begin{tabular}{|c|c|c|c|c|c|c|}\n')
-    fout.write('\\hline Total & Partial & Gradient & Pace & Section time & Split time & Location\\\\ \\hline\n')
-    for data in all_data[0]:
-        if type(data[2]) == str:
-            fout.write(' {0:4.1f} km & {1:4.1f} km & {2} \\%& {3} min/km & {4} & {5} &  {6}\\\\ \n'.format(*data))
-        else:
-            fout.write(' {0:4.1f} km & {1:4.1f} km & {2:.1f} \\%& {3} min/km & {4} & {5} &  {6}\\\\ \n'.format(*data))
-    fout.write('\\hline\n')
-    fout.write('\\end{tabular}\n')
-
-    fout.write('{\\\\[0.5cm]\\Large Split times per kilometer / per 5 kilometers / per notorious location}\\\\[0.5cm]\n')
-    fout.write('\\begin{minipage}{0.4\\textwidth}\n')
-    fout.write('\\begin{minipage}{0.4\\textwidth}\n')
-    fout.write('\\center\\begin{tabular}{|c|c|}\n')
-    fout.write('\\hline Km & Time\\\\ \\hline\n')
-    for (i,data) in enumerate(all_data[1]):
-        if i == len(all_data[1])/2 + 1:
-            fout.write('\\hline\n')
-            fout.write('\\end{tabular}\n')
-            fout.write('\\end{minipage}\n')
-            fout.write('\\begin{minipage}{0.4\\textwidth}\n')
-            fout.write('\\center\\begin{tabular}{|c|c|}\n')
-            fout.write('\\hline Km & Time\\\\ \\hline\n')
-        fout.write(' %s & %s \\\\ \n' % data)
-    fout.write('\\hline\n')
-    fout.write('\\end{tabular}\n')
-    fout.write('\\end{minipage}\n')
-    fout.write('\\end{minipage}\n')
-    fout.write('\\begin{minipage}{0.2\\textwidth}\n')
-    #fout.write('{\\Large Split times each 5 kilometers}\\\\[0.5cm]\n')
-    fout.write('\\begin{tabular}{|c|c|}\n')
-    fout.write('\\hline Km & Time\\\\ \\hline\n')
-    for data in all_data[2]:
-        fout.write(' %s & %s \\\\ \n' % data)
-    fout.write('\\hline\n')
-    fout.write('\\end{tabular}\n')
-    fout.write('\\end{minipage}\n')
-    fout.write('\\begin{minipage}{0.3\\textwidth}\n')
-    #fout.write('{\\Large Split times per distinctive spot}\\\n')
-    fout.write('\\center\\begin{tabular}{|c|c|c|}\n')
-    fout.write('\\hline Km & Time & Location\\\\ \\hline\n')
-    for data in all_data[3]:
-        fout.write(' %4.1f & %s & %s\\\\ \n' % data)
-    fout.write('\\hline\n')
-    fout.write('\\end{tabular}\n')
-    fout.write('\\end{minipage}\n')
-    
-    fout.write('\\end{center}\n')
-    fout.write('\\end{document}')
+    fout.write(template.render(name=name, hours=hours, minutes=minutes, data1=all_data[0][1:], data2=all_data[1], data3=all_data[2], data4=all_data[3], data5 = all_data[4]))
     fout.close()
-    os.system('pdflatex ' + file_name + '.tex')
+
+    #os.system('pdflatex ' + file_name + '.tex')
+    os.system('rubber -d %s.tex' % file_name)
+    os.system('rubber --clean ' + file_name)
+    os.system('rm %s.tex' % file_name)
     print('written to ' + file_name + '.pdf')
     #os.system('rm {0}.aux {0}.log {0}.tex'.format(file_name))
+
+    print(all_data[4])
     '''
     if createDVI:
         print(output_file + '.dvi created.')
