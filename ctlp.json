@@ -1,6 +1,7 @@
 {
   "name": "Media Maraton Club Tenis La Paz",
   "output": "ctlp",
+  "target times":["1:50", "2:10"],
   "points": 
   [
     {
