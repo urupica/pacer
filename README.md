@@ -6,6 +6,6 @@ This small python script might be helpful to you.
 
 It reads distance and altitude data from a JSON file and outputs pdf files with detailed pacing info.
 
-Still work in progress... More detailed description will follow
+Still work in progress... More details soon...
 
 For now visit [http://urupica.github.io/pacer/](http://urupica.github.io/pacer/) for sample outputs
