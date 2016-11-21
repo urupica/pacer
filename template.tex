@@ -9,7 +9,7 @@
 \begin{document}
 \begin{center}
 {\huge \VAR{name}}\\[0.5cm]
-{\Large Target time: \VAR{hours}:\VAR{minutes}h} \\[0.5cm]
+{\Large Tiempos parciales - \textbf{Objetivo: \VAR{hours}:\VAR{minutes}h}} \\[0.5cm]
 %----------------------
 % Graph
 %----------------------
@@ -19,7 +19,7 @@
     hide y axis,
     enlarge y limits = 0.4, 
     xlabel = {km},
-    x label style = {at = {(axis description cs:1.02,-0.05)},anchor = west},
+    x label style = {at = {(axis description cs:1.01,-0.05)},anchor = west},
     width = \textwidth,
     height = 5cm,
 ]
@@ -40,63 +40,74 @@
 ]
 {
     km, alt, location, anchor\\
-\BLOCK{ for data in data5 }
+\BLOCK{ for data in data6 }
     \VAR{data[0]}, \VAR{data[1]}, \VAR{data[2]}, \VAR{data[3]} \\
 \BLOCK{ endfor }
 };
 \end{axis}
-\end{tikzpicture}\\[0.5cm]
+\end{tikzpicture}\\[1cm]
 %----------------------
 % Overview table
 %----------------------
-{\Large Overview}\\[0.5cm]
+%{\Large Overview}\\[0.5cm]
 \begin{tabular}{|r|r|r|r|r|r|l|}
 \hline 
-\centercell{Total} & \centercell{Partial} & \centercell{Gradient} & \centercell{Pace} & \centercell{Section time} & \centercell{Split time} & \centercell{Location} \\
+\centercell{Total} & \centercell{Parcial} & \centercell{Pendiente} & \centercell{Ritmo} & \centercell{Tiempo sección} & \centercell{Tiempo parcial} & \centercell{Lugar} \\
 \hline
 \BLOCK{ for data in data1 }
 	\VAR{data[0]} & \VAR{data[1]} & \VAR{data[2]} & \VAR{data[3]} & \VAR{data[4]} & \VAR{data[5]} & \VAR{data[6]} \\
 \BLOCK{ endfor }
 \hline
-\end{tabular} \\[0.5cm]
+\end{tabular} \\[1cm]
 %----------------------
 % Various pace tables	
 %----------------------
-{\Large Pace tables} \\[0.5cm]
+%{\Large Pace tables} \\[0.5cm]
 % table per kilometer
-\begin{minipage}{0.15\textwidth}
-\center\begin{tabular}{|c|c|}
+\begin{minipage}[t]{0.45\textwidth}
+\begin{tabular}[t]{|c|c|}
 \hline
-Km & Time \\
+Km & Tiempo \\
 \hline
 \BLOCK{ for data in data2 }
 	\VAR{data[0]} & \VAR{data[1]} \\
 \BLOCK{ endfor }
 \hline
 \end{tabular}
-\end{minipage}
-\begin{minipage}{0.8\textwidth}
 %----------------------
 % table per 5 kilometers
 %----------------------
-\hspace{2cm}
-\begin{tabular}{|c|c|}
+\hspace{1cm}
+\begin{tabular}[t]{|c|c|}
 \hline 
-Km & Time \\
+Km & Tiempo \\
 \hline
 \BLOCK{ for data in data3 }
 	\VAR{data[0]} & \VAR{data[1]} \\
 \BLOCK{ endfor }
 \hline
 \end{tabular}
-\hspace{2cm}
+\end{minipage}
+\begin{minipage}[t]{0.45\textwidth}
 %----------------------
 % table for notorious locations
 %----------------------
-\begin{tabular}{|c|c|c|}
-\hline Km & Time & Location \\ 
+\begin{tabular}[t]{|c|c|c|}
+\hline Km & Tiempo & Lugar \\ 
 \hline
 \BLOCK{ for data in data4 }
+	\VAR{data[0]} & \VAR{data[1]} & \VAR{data[2]} \\
+\BLOCK{ endfor }
+\hline
+\end{tabular} \\[1cm]
+%\vspace{1cm}
+%----------------------
+% table for all locations
+%----------------------
+\begin{tabular}[t]{|c|c|c|}
+\hline Km & Tiempo & Lugar \\ 
+\hline
+\BLOCK{ for data in data5 }
 	\VAR{data[0]} & \VAR{data[1]} & \VAR{data[2]} \\
 \BLOCK{ endfor }
 \hline

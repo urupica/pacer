@@ -1,0 +1,96 @@
+{
+  "name": "Media Maratón Club Tenis La Paz 2016",
+  "prefix": "ctlp_2016",
+  "target times":["1:20", "1:30", "1:40", "1:50", "2:00", "2:10", "2:20", "2:30"],
+  "points": 
+  [
+    {
+      "dist": 0.0,
+      "alt": 3235,
+      "primary": true,
+      "short name": "Partida",
+      "full name": "Partida",
+      "anchor":"south east"
+    },
+    {
+      "dist": 1.5,
+      "alt": 3215,
+      "primary": false,
+      "short name": "Aranjuez",
+      "full name": "Puente Aranjuez",
+      "anchor":"north"
+    },
+    {
+      "dist": 3.5,
+      "alt": 3320,
+      "primary": true,
+      "short name": "Mallasa",
+      "full name": "Mallasa",
+      "anchor":"south"
+    },
+    {
+      "dist": 6.4,
+      "alt": 3220,
+      "primary": false,
+      "short name": "Il Portico",
+      "full name": "Restaurante Il Portico",
+      "anchor":"south west"
+    },
+    {
+      "dist": 9.5,
+      "alt": 3050,
+      "primary": true,
+      "short name": "Lipari",
+      "full name": "Puente Lipari",
+      "anchor":"north"
+    },
+    {
+      "dist": 10.8,
+      "alt": 3140,
+      "primary": true,
+      "short name": "Peaje",
+      "full name": "Peaje",
+      "anchor":"south"
+    },
+    {
+      "dist": 13.7,
+      "alt": 3025,
+      "primary": false,
+      "short name": "Huajchilla",
+      "full name": "Cancha futbol Huajchilla",
+      "anchor":"north east"
+    },
+    {
+      "dist": 16.3,
+      "alt": 2940,
+      "primary": true,
+      "short name": "Carreras",
+      "full name": "Carreras",
+      "anchor":"north"
+    },
+    {
+      "dist": 18.5,
+      "alt": 3025,
+      "primary": false,
+      "short name": "Huajchilla",
+      "full name": "Cancha futbol Huajchilla",
+      "anchor":"south east"
+    },
+    {
+      "dist": 20.5,
+      "alt": 3080,
+      "primary": false,
+      "short name": "Entrada CTH",
+      "full name": "Entrada CT Huajchilla",
+      "anchor":"south"
+    },
+    {
+      "dist": 21.1,
+      "alt": 3060,
+      "primary": true,
+      "short name": "Meta",
+      "full name": "Meta",
+      "anchor":"north west"
+    }
+  ]
+}

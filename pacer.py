@@ -7,23 +7,26 @@ from jinja2 import Template
 '''
 Usage: $ splittimes.py [input.json]
 
+pdfs will be written to current directory
 '''
 
 def main():
     with open(sys.argv[1]) as input_data:
         json_data = json.loads(input_data.read())
+        print("Course: " + json_data['name'])
         for target_time in json_data['target times']:
+            print("Computing target time " + target_time + "...")
             hh, mm = map(int, target_time.split(':'))
             file_name = sys.argv[1]
             name = json_data['name']
-            output_name = json_data['output']
+            output_name = json_data['prefix']
             points = json_data['points']
             calculate_split_times(name, output_name, points, hh, mm)
 
 def compute_between_indices(distances, partial_distances, height_differences, paces_per_section, partial_times, locations, i, j):
     data = []
     data.append(float(distances[i+1])/1000) # total distance
-    data.append(float(distances[i+1])/1000) # partial distance
+    data.append(float(partial_distances[i])/1000) # partial distance
     data.append(float(height_differences[i]*100)/partial_distances[i]) # gradient
     data.append(format_time(seconds = int(paces_per_section[i]*1000))) # pace
     data.append(format_time(int(paces_per_section[i]*partial_distances[i]))) # section time
@@ -31,14 +34,24 @@ def compute_between_indices(distances, partial_distances, height_differences, pa
     data.append(locations[i+1]) # location
     return data
 
-def format_time(seconds, force_hours=False):
+def format_time(seconds, force_hours=False, round_seconds=False):
     hours = seconds//3600
     seconds -= hours*3600
     minutes = seconds//60
     seconds -= minutes*60
+    if round_seconds:
+        if seconds >= 30:
+            minutes += 1
+        if minutes == 60:
+            hours += 1
+            minutes = 0
     if force_hours or hours > 0:
+        if round_seconds:
+            return '%d:%02d' % (hours, minutes)
         return '%d:%02d:%02d' % (hours, minutes, seconds)
     else:
+        if round_seconds:
+            return minutes
         return '%d:%02d' % (minutes, seconds)
 
 
@@ -52,7 +65,11 @@ def calculate_split_times(name, output_name, all_points, hours, minutes):
     markant_names = []
     markant_abbr = []
     markant_sections = []
-    alpha = Fraction(2,2)
+    anchor = []
+
+    # key variable that computes the pace according to the gradient
+    # higher value means higher difference between uphill and downhill speed
+    alpha = Fraction(4,2)
 
     for (i, point) in enumerate(all_points):
         points += 1
@@ -65,10 +82,11 @@ def calculate_split_times(name, output_name, all_points, hours, minutes):
             markant_abbr.append(point['short name'])
         locations_abbr.append(point['short name'])
         locations.append(point['full name'])
+        anchor.append(point['anchor'])
 
     total_time = (hours*60 + minutes)*60
 
-    tex_file_name = '{}_{}_{}'.format(output_name, hours, minutes)
+    tex_file_name = '{}_{:02d}_{:02d}'.format(output_name, hours, minutes)
     all_data = []
     
     #split times for the sections
@@ -87,15 +105,21 @@ def calculate_split_times(name, output_name, all_points, hours, minutes):
         partial += paces_per_section[i]*partial_distances[i]
         partial_times.append(int(partial))
 
-
-
     data_1 = [['0 km', '0 km' ,'\centercell{---}', '\centercell{---}' ,'0:00 min', '0:00:00 h',locations[0]]]
     for i in range(points - 1):
         computed_data = compute_between_indices(distances, partial_distances, height_differences, paces_per_section, partial_times, locations, i, i+1)
         data_1.append(list(map(lambda x: ('%.1f km' % x[1]) if x[0] <= 1 else ('%.1f \\%%' % x[1]) if x[0] == 2 else ('%s min/km' % x[1]) if x[0] == 3 else ('%s min' % x[1]) if x[0] == 4 else ('%s h' % x[1]) if x[0] == 5 else x[1], list(enumerate(computed_data)))))
     all_data.append(data_1)
-   
 
+    data_5 = []#['0 km', '0 km' ,'\centercell{---}', '\centercell{---}' ,'0:00 min', '0:00:00 h',locations[0]]]
+    for i in range(points - 1):
+        data = [float(distances[i + 1])/1000, 
+                format_time(partial_times[i], True, True), 
+                locations_abbr[i + 1]]
+        data_5.append(data)
+
+
+    all_data.append(data_5)
     partial_times = [0]
     partial_time = 0
     section = 0
@@ -128,7 +152,8 @@ def calculate_split_times(name, output_name, all_points, hours, minutes):
     for i in range(1, len(partial_times)):
         data = (
                 str(i).rjust(2), 
-                str(datetime.timedelta(seconds = partial_times[i]))[:7])
+                #str(datetime.timedelta(seconds = partial_times[i]))[:7])
+                format_time(partial_times[i], True, True)) 
         data_2.append(data)
     all_data.append(data_2)
    
@@ -140,7 +165,7 @@ def calculate_split_times(name, output_name, all_points, hours, minutes):
     distance_used = 0
     height_start = heights[0]
     partial_distance = 0
-    while partial_distance <= distances[-1]-5000:
+    while partial_distance <= distances[-1] - 5000:
         section_begin = section
         distance_used_begin = distance_used
         section_distance = 0
@@ -163,8 +188,8 @@ def calculate_split_times(name, output_name, all_points, hours, minutes):
     data_3 = [] 
     for i in range(1, len(partial_times)):
         data =(
-                str(5*i).rjust(2), 
-                str(datetime.timedelta(seconds = partial_times[i]))[:7])
+                5*i,
+                format_time(partial_times[i], True, True)) 
         data_3.append(data)
     all_data.append(data_3)
     
@@ -204,19 +229,19 @@ def calculate_split_times(name, output_name, all_points, hours, minutes):
     
     data_4 = []  
     for i in range(1, len(partial_times)):
-        if partial_times[i]%60 >= 30:
-            partial_times[i] += 60
         data = (
                 float(markant_distances[i])/1000, 
-                str(datetime.timedelta(seconds = partial_times[i]))[:4],
+                format_time(partial_times[i], True, True),
                 markant_abbr[i])
         data_4.append(data)
     all_data.append(data_4)
     
-    data_5 = []
+
+    data_6 = []
     for i in range(points):
-        data_5.append((float(distances[i])/1000, heights[i], locations[i], "south" if i % 2 == 0 else "north"))
-    all_data.append(data_5)
+        data_6.append((float(distances[i])/1000, heights[i], locations_abbr[i], anchor[i]))
+    all_data.append(data_6)
+
     create_pdf(tex_file_name, name, hours, minutes, all_data)
 
 def create_pdf(file_name, name, hours, minutes, all_data):
@@ -231,11 +256,24 @@ def create_pdf(file_name, name, hours, minutes, all_data):
 	line_comment_prefix = '%#',
 	trim_blocks = True,
 	autoescape = False,
-	loader = jinja2.FileSystemLoader(os.path.abspath('.'))
+	loader = jinja2.FileSystemLoader(os.path.dirname(os.path.abspath(sys.argv[0])))
     )
+    #pathname = os.path.dirname(sys.argv[0])
+    #template_path = os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])), 'template.tex')
+    #template = latex_jinja_env.get_template(template_path)
     template = latex_jinja_env.get_template('template.tex')
+    print("output: " + file_name + '.tex')
     fout = open(file_name + '.tex','w')
-    fout.write(template.render(name=name, hours=hours, minutes=minutes, data1=all_data[0], data2=all_data[1], data3=all_data[2], data4=all_data[3], data5 = all_data[4]))
+    fout.write(template.render(
+        name = name, 
+        hours = hours, 
+        minutes = minutes, 
+        data1 = all_data[0], 
+        data2 = all_data[2], 
+        data3 = all_data[3], 
+        data4 = all_data[4], 
+        data5 = all_data[1],
+        data6 = all_data[5]))
     fout.close()
 
     os.system('rubber -d %s.tex' % file_name)
