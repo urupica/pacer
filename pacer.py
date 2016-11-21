@@ -21,18 +21,37 @@ def compute_between_distances(dist1, dist2):
     return False
 
 def compute_between_indices(distances, partial_distances, height_differences, paces_per_section, partial_times, locations, i, j):
+    data = []
+    data.append(float(distances[i+1])/1000) # total distance
+    data.append(float(distances[i+1])/1000) # partial distance
+    data.append(float(height_differences[i]*100)/partial_distances[i]) # gradient
+    data.append(format_time(seconds = int(paces_per_section[i]*1000))) # pace
+    data.append(format_time(int(paces_per_section[i]*partial_distances[i]))) # section time
+    data.append(format_time(partial_times[i], True)) # total time
+    data.append(locations[i+1]) # location
+    '''
     data = (
             #str(i+1).rjust(2),
             float(distances[i+1])/1000,
             float(partial_distances[i])/1000,
-            "%.2f" % (float(height_differences[i]*100)/partial_distances[i]),
+            float(height_differences[i]*100)/partial_distances[i],
             str(datetime.timedelta(seconds = int(paces_per_section[i]*1000)))[3:7],
-            str(datetime.timedelta(seconds = int(paces_per_section[i]*partial_distances[i])))[:7],
+            str(datetime.timedelta(seconds = int(paces_per_section[i]*partial_distances[i])))[2:7],
             str(datetime.timedelta(seconds = partial_times[i]))[:7],
             locations[i+1])
+    '''
     #if pront_to_stdout == True:# and i+1 in markant_sections:
     return data
 
+def format_time(seconds, force_hours=False):
+    hours = seconds//3600
+    seconds -= hours*3600
+    minutes = seconds//60
+    seconds -= minutes*60
+    if force_hours or hours > 0:
+        return '%d:%02d:%02d' % (hours, minutes, seconds)
+    else:
+        return '%d:%02d' % (minutes, seconds)
 
 
 def calculate_split_times(file_name, hours, minutes, stdout, pdf):
@@ -102,9 +121,15 @@ def calculate_split_times(file_name, hours, minutes, stdout, pdf):
 
 
 
-    data_1 = [[0,0,'-','-','0:00:00', '0:00:00',locations[0]]]
+    data_1 = [['0 km', '0 km' ,'\centercell{---}', '\centercell{---}' ,'0:00 min', '0:00:00 h',locations[0]]]
     for i in range(points - 1):
-        data_1.append(compute_between_indices(distances, partial_distances, height_differences, paces_per_section, partial_times, locations, i, i+1))
+        computed_data = compute_between_indices(distances, partial_distances, height_differences, paces_per_section, partial_times, locations, i, i+1)
+        #data_1.append(list(map(lambda x: ('%.1f km' % x[1]) if x[0] <= 1 else ('%.1f \\\%' % x[1]) if x[0] == 2 else ('%.1 min/km' % x[1]) if x[0] == 3 else ('%s h' % x[1]) if x[0] <= 5 else x[1], enumerate(computed_data))))
+        #print(list(enumerate(computed_data)))
+        #print(list(map(lambda x:x[1], list(enumerate(computed_data)))))
+        data_1.append(list(map(lambda x: ('%.1f km' % x[1]) if x[0] <= 1 else ('%.1f \\%%' % x[1]) if x[0] == 2 else ('%s min/km' % x[1]) if x[0] == 3 else ('%s min' % x[1]) if x[0] == 4 else ('%s h' % x[1]) if x[0] == 5 else x[1], list(enumerate(computed_data)))))
+        #ppend(map(lambda x: ('%.1f km' % x[1]) if x[0] <= 1 else ('%.1f \\\%' % x[1]) if x[0] == 2 else ('%.1 min/km' % x[1]) if x[0] == 3 else ('%s h' % x[1]) if x[0] <= 5 else x[1], enumerate(computed_data)))
+        #data_1.append(map(lambda j,d: ('%.1f km' % d) if j <= 1 else d, list(enumerate(computed_data))))
     all_data.append(data_1)
    
 
@@ -292,13 +317,13 @@ def create_pdf(file_name, name, hours, minutes, all_data):
     )
     template = latex_jinja_env.get_template('template.tex')
     fout = open(file_name + '.tex','w')
-    fout.write(template.render(name=name, hours=hours, minutes=minutes, data1=all_data[0][1:], data2=all_data[1], data3=all_data[2], data4=all_data[3], data5 = all_data[4]))
+    fout.write(template.render(name=name, hours=hours, minutes=minutes, data1=all_data[0], data2=all_data[1], data3=all_data[2], data4=all_data[3], data5 = all_data[4]))
     fout.close()
 
     #os.system('pdflatex ' + file_name + '.tex')
     os.system('rubber -d %s.tex' % file_name)
-    os.system('rubber --clean ' + file_name)
-    os.system('rm %s.tex' % file_name)
+    #os.system('rubber --clean ' + file_name)
+    #os.system('rm %s.tex' % file_name)
     print('written to ' + file_name + '.pdf')
     #os.system('rm {0}.aux {0}.log {0}.tex'.format(file_name))
 

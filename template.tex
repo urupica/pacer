@@ -1,93 +1,74 @@
 \documentclass[letterpaper]{article}
 \usepackage[margin=1in]{geometry}
 \usepackage[utf8]{inputenc}
-%\usepackage{graphicx}
-
 \usepackage{pgfplots}
-\pgfplotsset{compat=1.8}
-
+% this is the pgfplots version installed on my computer
+\pgfplotsset{compat=1.13}
+% center some table cells
+\newcommand*{\centercell}[1]{\multicolumn{1}{|c|}{#1}}
 \begin{document}
-\begin{center}{\huge Split times - \VAR{name}\\Target time: \VAR{hours}:\VAR{minutes}h}\\[0.5cm]
-{\Large Uphill and downhill sections}\\[0.5cm]
-\begin{tabular}{|c|c|c|c|c|c|c|}
-\hline Total & Partial & Gradient & Pace & Section time & Split time & Location\\ \hline
-
-\BLOCK{ for data in data1 }
-	\VAR{data[0]} km & \VAR{data[1]} km & \VAR{data[2]} \%& \VAR{data[3]} min/km & \VAR{data[4]} & \VAR{data[5]} & \VAR{data[6]} \\
-\BLOCK{ endfor }
-\hline
-\end{tabular}
-	\\[1cm]
+\begin{center}
+{\huge \VAR{name}}\\[0.5cm]
+{\Large Target time: \VAR{hours}:\VAR{minutes}h} \\[0.5cm]
+%----------------------
+% Graph
+%----------------------
 \begin{tikzpicture}
 \begin{axis}[
     axis lines = left,
-	hide y axis,
-    %enlargelimits = true,
-	enlarge y limits=0.2, 
-	xlabel = {distance [km]},
-	ylabel = {altitude [m]},
-    width =\textwidth,
-    height= 5cm,
-    %title = {Pacer},
+    hide y axis,
+    enlarge y limits = 0.4, 
+    xlabel = {km},
+    x label style = {at = {(axis description cs:1.02,-0.05)},anchor = west},
+    width = \textwidth,
+    height = 5cm,
 ]
 \addplot[
-    line width=1pt,
-    mark=*,
-    x=km,
-    y=alt,
+    line width = 1pt,
+    mark = *,
+    x = km,
+    y = alt,
     nodes near coords,
-    point meta=explicit symbolic,
-    visualization depends on={value \thisrow{anchor}\as\myanchor},
-    nodes near coords align={anchor=\myanchor},
-    %nodes={font=\small},
-    %nodes near coords align={anchor=west},
-    %visualization depends on={value \thisrow{anchor}\as\myanchor},
-    %every node near coord/.append style={font=\small,anchor=\myanchor}
-    %every node near coord/.append style={font=\small, anchor=south}
+    point meta = explicit symbolic,
+    visualization depends on = {value \thisrow{anchor}\as\myanchor},
+    nodes near coords align = {anchor=\myanchor},
 ] table
 [
-col sep=comma,
-row sep=\\,
-meta=location
+    col sep = comma,
+    row sep = \\,
+    meta = location
 ]
 {
-km, alt, location, anchor\\
+    km, alt, location, anchor\\
 \BLOCK{ for data in data5 }
-	\VAR{data[0]}, \VAR{data[1]}, \VAR{data[2]}, \VAR{data[3]}\\
+    \VAR{data[0]}, \VAR{data[1]}, \VAR{data[2]}, \VAR{data[3]} \\
 \BLOCK{ endfor }
 };
 \end{axis}
-\end{tikzpicture}
-%    \begin{axis}[
-%    width=\textwidth,
-%    height=5cm,
-%    ymajorgrids,
-%    title = {Title},
-%    axis lines = left,
-%	   xlabel={distance [km]},
-%	    ylabel={altitude [m]}
-%    ]
-%	    \addplot[
-%		mark=*,
-%		x=km,
-%	    	y=alt,
-%	    	nodes near coords
-    		%point meta=explicit symbolic
-%		    ]table[
-%		meta=location
-%		] {data.csv};
-	    %mark=*,
-	    %only marks, 
-	    %scatter src=explicit symbolic,
-    %x tick label style={/pgf/number format/1000 sep=},
-    %ytick scale label code/.code={$\times$bn\EUR{}},
-    %legend pos=outer north east
-%    \end{axis}
-%\end{tikzpicture}
-{\\[0.5cm]\Large Split times per kilometer / per 5 kilometers / per notorious location}\\[0.5cm]
+\end{tikzpicture}\\[0.5cm]
+%----------------------
+% Overview table
+%----------------------
+{\Large Overview}\\[0.5cm]
+\begin{tabular}{|r|r|r|r|r|r|l|}
+\hline 
+\centercell{Total} & \centercell{Partial} & \centercell{Gradient} & \centercell{Pace} & \centercell{Section time} & \centercell{Split time} & \centercell{Location} \\
+\hline
+\BLOCK{ for data in data1 }
+	\VAR{data[0]} & \VAR{data[1]} & \VAR{data[2]} & \VAR{data[3]} & \VAR{data[4]} & \VAR{data[5]} & \VAR{data[6]} \\
+\BLOCK{ endfor }
+\hline
+\end{tabular} \\[0.5cm]
+%----------------------
+% Various pace tables	
+%----------------------
+{\Large Pace tables} \\[0.5cm]
+% table per kilometer
 \begin{minipage}{0.15\textwidth}
 \center\begin{tabular}{|c|c|}
-\hline Km & Time\\ \hline
+\hline
+Km & Time \\
+\hline
 \BLOCK{ for data in data2 }
 	\VAR{data[0]} & \VAR{data[1]} \\
 \BLOCK{ endfor }
@@ -95,30 +76,31 @@ km, alt, location, anchor\\
 \end{tabular}
 \end{minipage}
 \begin{minipage}{0.8\textwidth}
-%\begin{minipage}{0.4\textwidth}
-	\hspace{2cm}
+%----------------------
+% table per 5 kilometers
+%----------------------
+\hspace{2cm}
 \begin{tabular}{|c|c|}
-\hline Km & Time\\ \hline
+\hline 
+Km & Time \\
+\hline
 \BLOCK{ for data in data3 }
 	\VAR{data[0]} & \VAR{data[1]} \\
 \BLOCK{ endfor }
 \hline
 \end{tabular}
-%\end{minipage} 
-%\begin{minipage}{0.5\textwidth}
-	\hspace{2cm}
+\hspace{2cm}
+%----------------------
+% table for notorious locations
+%----------------------
 \begin{tabular}{|c|c|c|}
-\hline Km & Time & Location\\ \hline
+\hline Km & Time & Location \\ 
+\hline
 \BLOCK{ for data in data4 }
 	\VAR{data[0]} & \VAR{data[1]} & \VAR{data[2]} \\
 \BLOCK{ endfor }
 \hline
 \end{tabular}
-%\end{minipage}
-
 \end{minipage}
-
-
-
 \end{center}
 \end{document}
