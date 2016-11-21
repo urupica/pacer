@@ -8,4 +8,4 @@ It reads distance and altitude data from a JSON file and outputs pdf files with 
 
 Still work in progress... More detailed description will follow
 
-For now visit [URL] for a working example
+For now visit [http://urupica.github.io/pacer/](http://urupica.github.io/pacer/) for sample outputs
