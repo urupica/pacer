@@ -71,7 +71,7 @@ def calculate_split_times(name, output_name, all_points, hours, minutes):
 
     # key variable that computes the pace according to the gradient
     # higher value means higher difference between uphill and downhill speed
-    alpha = Fraction(4,2)
+    alpha = Fraction(6,2)
 
     for (i, point) in enumerate(all_points):
         points += 1
