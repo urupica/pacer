@@ -269,7 +269,7 @@ def create_pdf(file_name, name, hours, minutes, all_data):
     fout.write(template.render(
         name = name, 
         hours = hours, 
-        minutes = minutes, 
+        minutes = ('%02d' % minutes), 
         data1 = all_data[0], 
         data2 = all_data[2], 
         data3 = all_data[3], 
