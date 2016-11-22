@@ -8,4 +8,4 @@ It reads distance and altitude data from a JSON file and outputs pdf files with 
 
 Still work in progress... More details soon...
 
-For now visit [ctlp_2016](ctlp_2016) for sample outputs
+For now visit [ctlp_2016](ctlp_2016) for sample outputs or [http://urupica.github.io/pacer/](http://urupica.github.io/pacer/) for a race I used the pace tables for.
