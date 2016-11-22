@@ -2,8 +2,10 @@
 \usepackage[margin=1in]{geometry}
 \usepackage[utf8]{inputenc}
 \usepackage{pgfplots}
+\usepackage{hyperref}
 % this is the pgfplots version installed on my computer
 \pgfplotsset{compat=1.13}
+\pagestyle{empty}
 % center some table cells
 \newcommand*{\centercell}[1]{\multicolumn{1}{|c|}{#1}}
 \begin{document}
@@ -45,20 +47,21 @@
 \BLOCK{ endfor }
 };
 \end{axis}
-\end{tikzpicture}\\[1cm]
+\end{tikzpicture}\\[0.5cm]
 %----------------------
 % Overview table
 %----------------------
 %{\Large Overview}\\[0.5cm]
 \begin{tabular}{|r|r|r|r|r|r|l|}
-\hline 
-\centercell{Total} & \centercell{Parcial} & \centercell{Pendiente} & \centercell{Ritmo} & \centercell{Tiempo sección} & \centercell{Tiempo parcial} & \centercell{Lugar} \\
+\hline
+\multicolumn{2}{|c|}{Kilómetros} & \centercell{Pendiente} & \centercell{Ritmo} & \multicolumn{2}{|c|}{Tiempos} & \centercell{Lugar} \\
+\centercell{Total} & \centercell{Sección} & \centercell{Sección} & \centercell{Sección} & \centercell{Sección} & \centercell{Parcial} & \\
 \hline
 \BLOCK{ for data in data1 }
 	\VAR{data[0]} & \VAR{data[1]} & \VAR{data[2]} & \VAR{data[3]} & \VAR{data[4]} & \VAR{data[5]} & \VAR{data[6]} \\
 \BLOCK{ endfor }
 \hline
-\end{tabular} \\[1cm]
+\end{tabular} \\[0.5cm]
 %----------------------
 % Various pace tables	
 %----------------------
@@ -113,6 +116,6 @@ Km & Tiempo \\
 \hline
 \end{tabular}
 \end{minipage} \\
-{\footnotesize Kevin Bauer / https://github.com/urupica/pacer/}
+{\footnotesize Kevin Bauer $\bullet$ \url{https://github.com/urupica/pacer/}}
 \end{center}
 \end{document}
