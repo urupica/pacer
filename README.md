@@ -1,10 +1,12 @@
-# pacer
+# Pacer
 
 Want to hit a specific target time in a hilly foot race?
 
 This small python script might be helpful to you.
 
 It reads distance and altitude data from a JSON file and outputs pdf files with detailed pacing info.
+
+It requires python3 as well as jinja2, rubber and latex to generate the pdf files.
 
 Still work in progress... More details soon...
 
