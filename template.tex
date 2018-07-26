@@ -18,10 +18,12 @@
 \begin{tikzpicture}
 \begin{axis}[
     axis lines = left,
-    hide y axis,
+%    hide y axis,
     enlarge y limits = 0.4, 
-    xlabel = {km},
-    x label style = {at = {(axis description cs:1.01,-0.05)},anchor = west},
+    xlabel = {Distancia (km)},
+    ylabel = {Altura (m)},
+    x label style = {at = {(axis description cs:1.11,.15)},anchor = east},
+    y label style = {rotate=-90, at = {(axis description cs:-0.01,1.25)},anchor = north},
     width = \textwidth,
     height = 5cm,
 ]
@@ -54,11 +56,15 @@
 %{\Large Overview}\\[0.5cm]
 \begin{tabular}{|r|r|r|r|r|r|l|}
 \hline
-\multicolumn{2}{|c|}{Kilómetros} & \centercell{Pendiente} & \centercell{Ritmo} & \multicolumn{2}{|c|}{Tiempos} & \centercell{Lugar} \\
-\centercell{Total} & \centercell{Sección} & \centercell{Sección} & \centercell{Sección} & \centercell{Sección} & \centercell{Parcial} & \\
+%\multicolumn{2}{|c|}{Kilómetros} & \centercell{Pendiente} & \centercell{Ritmo} & \multicolumn{2}{|c|}{Tiempos} & \centercell{Lugar} \\
+%\centercell{Total} & \centercell{Sección} & \centercell{Sección} & \centercell{Sección} & \centercell{Sección} & \centercell{Parcial} & \\
+\centercell{Kilómetros} & \centercell{Pendiente} & \centercell{Ritmo} & \centercell{Tiempos} \\
+\centercell{Parciales} & \centercell{Sección} & \centercell{Sección} & \centercell{Parciales} \\
+%\centercell{Kilómetros} & \centercell{Pendiente} & \centercell{Ritmo} & \multicolumn{2}{|c|}{Tiempos} & \centercell{Lugar} \\
+%\centercell{Total} & \centercell{Sección} & \centercell{Sección} & \centercell{Parcial} & \\
 \hline
 \BLOCK{ for data in data1 }
-	\VAR{data[0]} & \VAR{data[1]} & \VAR{data[2]} & \VAR{data[3]} & \VAR{data[4]} & \VAR{data[5]} & \VAR{data[6]} \\
+	\VAR{data[0]} & \VAR{data[2]} & \VAR{data[3]} & \VAR{data[5]} \\
 \BLOCK{ endfor }
 \hline
 \end{tabular} \\[0.5cm]
@@ -95,27 +101,29 @@ Km & Tiempo \\
 %----------------------
 % table for notorious locations
 %----------------------
-\begin{tabular}[t]{|c|c|c|}
-\hline Km & Tiempo & Lugar \\ 
-\hline
-\BLOCK{ for data in data4 }
-	\VAR{data[0]} & \VAR{data[1]} & \VAR{data[2]} \\
-\BLOCK{ endfor }
-\hline
-\end{tabular} \\[1cm]
+%\begin{tabular}[t]{|c|c|c|}
+%\hline Km & Tiempo & Lugar \\
+%\hline
+%\BLOCK{ for data in data4 }
+%	\VAR{data[0]} & \VAR{data[1]} & \VAR{data[2]} \\
+%\BLOCK{ endfor }
+%\hline
+%\end{tabular} \\[1cm]
 %\vspace{1cm}
 %----------------------
 % table for all locations
 %----------------------
-\begin{tabular}[t]{|c|c|c|}
-\hline Km & Tiempo & Lugar \\ 
-\hline
-\BLOCK{ for data in data5 }
-	\VAR{data[0]} & \VAR{data[1]} & \VAR{data[2]} \\
-\BLOCK{ endfor }
-\hline
-\end{tabular}
+%\begin{tabular}[t]{|c|c|c|}
+%\hline Km & Tiempo & Lugar \\
+%\hline
+%\BLOCK{ for data in data5 }
+%	\VAR{data[0]} & \VAR{data[1]} & \VAR{data[2]} \\
+%\BLOCK{ endfor }
+%\hline
+%\end{tabular}
 \end{minipage} \\
-{\footnotesize Kevin Bauer $\bullet$ \url{http://urupica.github.io/pacer/}}
 \end{center}
+\begin{flushright}
+{\footnotesize Kevin Bauer $\bullet$ \url{http://urupica.github.io/pacer/}}
+\end{flushright}
 \end{document}

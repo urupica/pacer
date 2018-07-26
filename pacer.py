@@ -240,7 +240,7 @@ def calculate_split_times(name, output_name, all_points, hours, minutes):
     
 
     data_6 = []
-    for i in range(points):
+    for i in range(points - 1):
         data_6.append((float(distances[i])/1000, heights[i], locations_abbr[i], anchor[i]))
     all_data.append(data_6)
 
